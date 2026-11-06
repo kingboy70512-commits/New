@@ -3,38 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - MY VIP PANEL</title>
+    <title>Login - XEROX C PANEL</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        body { background: linear-gradient(135deg, #ff6b6b, #ffe600, #55efc4); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .card { background: #ffffff; width: 100%; max-width: 450px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; }
-        .card-header { padding: 15px; font-weight: bold; border-bottom: 1px solid #eee; color: #333; font-size: 16px; background: linear-gradient(to right, #ffafbd, #ffc3a0); text-align: center; }
-        .card-body { padding: 20px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: bold; color: #555; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; outline: none; }
-        .btn { background: transparent; border: 1px solid #fdcb6e; color: #e17055; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; text-align: center; display: block; }
-        .btn:hover { background: #fff5e6; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { 
+            background: #030712; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 🌟 ফুল স্ক্রিন ঘন ও উজ্জ্বল সাদা মুভিং স্টার অ্যানিমেশন */
+        .stars-container {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .stars, .stars2 {
+            position: absolute;
+            top: -100%; left: 0; right: 0; bottom: 0;
+            width: 100%; height: 200%;
+            display: block;
+        }
+        
+        .stars {
+            background-image: 
+                radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 160px 120px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 210px 190px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 250px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 280px 150px, #ffffff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 300px 300px;
+            animation: moveStars 10s linear infinite;
+            filter: drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 10px #00d2ff);
+            opacity: 0.95;
+        }
+
+        .stars2 {
+            background-image: 
+                radial-gradient(2.5px 2.5px at 50px 100px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 120px 200px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 190px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2.5px 2.5px at 240px 170px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 290px 90px, #ffffff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 350px 350px;
+            animation: moveStars 16s linear infinite;
+            filter: drop-shadow(0 0 8px #ffffff);
+            opacity: 0.85;
+        }
+
+        @keyframes moveStars {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50%); }
+        }
+
+        /* প্রিমিয়াম গ্লোয়িং ডার্ক কার্ড */
+        .card { 
+            background: rgba(10, 16, 28, 0.85); 
+            width: 100%; 
+            max-width: 420px; 
+            border-radius: 14px; 
+            border: 1px solid rgba(0, 123, 255, 0.25);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 123, 255, 0.15); 
+            overflow: hidden; 
+            z-index: 1; 
+            position: relative;
+            backdrop-filter: blur(10px);
+            padding: 30px 25px;
+            text-align: center;
+        }
+        
+        /* 👑 ক্রাউন SVG লোগো */
+        .crown-svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+        }
+
+        .brand-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 3px;
+            text-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
+
+        .brand-subtitle {
+            color: #00d2ff;
+            font-size: 11px;
+            letter-spacing: 3px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+        
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 11px; font-weight: bold; color: #8a9ba8; letter-spacing: 1px; }
+        
+        /* ইনপুট ফিল্ড */
+        .form-group input { 
+            width: 100%; 
+            padding: 12px 15px; 
+            background: rgba(5, 11, 20, 0.9);
+            border: 1px solid #1e293b; 
+            color: #fff;
+            border-radius: 8px; 
+            font-size: 13px; 
+            outline: none; 
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+            border-color: #00d2ff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+        }
+        
+        /* গ্লোয়িং নীল বাটন */
+        .btn { 
+            background: linear-gradient(135deg, #007bff, #00d2ff); 
+            border: none; 
+            color: white; 
+            padding: 12px 16px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            width: 100%; 
+            text-align: center; 
+            display: block; 
+            font-size: 14px;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .btn:hover { 
+            background: linear-gradient(135deg, #00d2ff, #007bff);
+            box-shadow: 0 8px 20px rgba(0, 210, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .footer-text {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #8a9ba8;
+        }
+        .footer-text a {
+            color: #00d2ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
+    <!-- 🌟 ফুল স্ক্রিন গ্লোয়িং স্টার কন্টেইনার -->
+    <div class="stars-container">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+    </div>
+
     <div class="card">
-        <div class="card-header">LOGIN</div>
-        <div class="card-body">
+        <!-- 👑 ইনলাইন ক্রাউন SVG -->
+        <svg class="crown-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5Z" fill="#FFD700" stroke="#FFA500" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M5 18H19V19H5V18Z" fill="#FFD700"/>
+            <circle cx="12" cy="4" r="1" fill="#FFFFFF"/>
+            <circle cx="3" cy="5" r="1" fill="#FFFFFF"/>
+            <circle cx="21" cy="5" r="1" fill="#FFFFFF"/>
+        </svg>
+
+        <div class="brand-title">XEROX C PANEL</div>
+        <div class="brand-subtitle">VIP SECURE</div>
+
+        <div class="card-body" style="padding: 0;">
             <div class="form-group">
-                <label>USERNAME</label>
+                <label>ENTER USERNAME</label>
                 <input type="text" id="loginUser" placeholder="Enter username">
             </div>
             <div class="form-group">
-                <label>PASSWORD</label>
+                <label>ENTER PASSWORD</label>
                 <input type="password" id="loginPass" placeholder="Enter password">
             </div>
-            <button type="button" class="btn" onclick="login()">Log in</button>
-            <p style="text-align:center; margin-top:15px; font-size:13px;">
-                Don't have an account? <a href="/signup" style="color:#e17055;">Register here</a>
-            </p>
+            <button type="button" class="btn" onclick="login()">AUTHENTICATE →</button>
+            
+            <div class="footer-text">
+                Don't have an account? <a href="/signup">Register here</a>
+            </div>
         </div>
     </div>
+    
     <script>
         function login() {
             let user = document.getElementById('loginUser').value.trim();
