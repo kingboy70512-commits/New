@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MY VIP PANEL</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background: linear-gradient(135deg, #ff6b6b, #ffe600, #55efc4); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .header { width: 100%; display: flex; justify-content: space-between; align-items: center; color: #d63031; font-weight: bold; font-size: 20px; padding: 10px; max-width: 450px; }
+        .menu-bar { width: 100%; max-width: 450px; display: flex; gap: 15px; padding: 10px; background: rgba(255,255,255,0.3); border-radius: 4px; margin-bottom: 10px; font-weight: bold; font-size: 14px; }
+        .menu-bar span { cursor: pointer; color: #333; }
+        .menu-bar span:hover { color: #d63031; }
+        .card { background: #ffffff; width: 100%; max-width: 450px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; margin-top: 10px; }
+        .card-header { padding: 15px; font-weight: bold; border-bottom: 1px solid #eee; color: #333; font-size: 16px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to right, #ffafbd, #ffc3a0); }
+        .card-body { padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: bold; color: #555; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; outline: none; }
+        .btn { background: transparent; border: 1px solid #fdcb6e; color: #e17055; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; text-align: center; display: block; }
+        .btn:hover { background: #fff5e6; }
+        .key-list { margin-top: 15px; max-height: 180px; overflow-y: auto; border: 1px solid #ddd; padding: 5px; font-size: 12px; }
+        .key-item { background: #f9f9f9; padding: 6px; margin-bottom: 4px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+        .logout-btn { color: #d63031; font-size: 12px; cursor: pointer; font-weight: bold; background: #fff; padding: 3px 6px; border-radius: 3px; }
+        .balance-badge { background: #ffeaa7; color: #d63031; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .expire-banner { background: #d4edda; color: #155724; padding: 10px; text-align: center; font-size: 13px; font-weight: bold; border-radius: 4px; margin-bottom: 10px; border: 1px solid #c3e6cb; }
+        .timer-box { background: #ffffff; padding: 12px; text-align: center; font-size: 18px; font-weight: bold; color: #444; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 15px; border-top: 3px solid #ff7675; }
+        .stats-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .stats-table td { padding: 10px; border-bottom: 1px solid #eee; }
+        .stats-table td:last-child { text-align: right; font-weight: bold; color: #d63031; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div>MY VIP PANEL</div>
+        <div style="font-size: 14px; color: #333;">@ALTAB_VIP</div>
+    </div>
+
+    <div id="dashboardSection" style="width:100%; max-width:450px;">
+        <div class="menu-bar">
+            <span onclick="switchTab('home')" style="color:#d63031;">Home / Stats</span>
+            <span onclick="switchTab('generate')">Generate</span>
+            <span onclick="switchTab('keys')">Keys</span>
+            <span style="margin-left:auto;" class="logout-btn" onclick="logout()">Logout</span>
+        </div>
+
+        <!-- TAB 1: HOME & STATS -->
+        <div class="card" id="tabHome">
+            <div class="card-header">
+                <span id="welcomeUser">Welcome</span>
+                <span class="balance-badge">Bal: <span id="userBalance">999999</span></span>
+            </div>
+            <div class="card-body">
+                <div class="expire-banner" id="expireBannerText">Account Expires on : Loading...</div>
+                <div style="font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; text-align:center;">Expiration</div>
+                <div class="timer-box" id="countdownTimer">00Day : 00h 00m 00s</div>
+                <div style="font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px;">Details</div>
+                <div class="card" style="margin-top:0; box-shadow:none; border:1px solid #eee;">
+                    <table class="stats-table">
+                        <tr><td>TOTAL KEYS</td><td id="totalKeysCount">0</td></tr>
+                        <tr><td>USED KEYS</td><td id="usedKeysCount">0</td></tr>
+                        <tr><td>UN-USED KEYS</td><td id="unusedKeysCount">0</td></tr>
+                        <tr><td>TOTAL USERS</td><td>1</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: GENERATE LICENSE -->
+        <div class="card" id="tabGenerate" style="display:none;">
+            <div class="card-header">Create License</div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Game</label>
+                    <select id="game">
+                        <option value="PUBG Mobile">PUBG Mobile</option>
+                        <option value="Free Fire">Free Fire</option>
+                        <option value="BGMI">BGMI</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Max Devices</label>
+                    <input type="number" id="devices" value="1" min="1" oninput="calculateEstimation()">
+                </div>
+                <div class="form-group">
+                    <label>Duration</label>
+                    <select id="duration" onchange="calculateEstimation()">
+                        <option value="2 Hours — ₹10/Device" data-price="10">2 Hours — ₹10/Device</option>
+                        <option value="1 Days — ₹80/Device" data-price="80">1 Days — ₹80/Device</option>
+                        <option value="7 Days — ₹200/Device" data-price="200">7 Days — ₹200/Device</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Bulk Keys</label>
+                    <select id="bulkKeys" onchange="calculateEstimation()">
+                        <option value="1">1 Keys</option>
+                        <option value="5">5 Keys</option>
+                        <option value="10">10 Keys</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Estimation</label>
+                    <input type="text" id="estimation" readonly value="10" style="background:#eee; font-weight:bold;">
+                </div>
+                <button type="button" class="btn" onclick="generateKey()">Generate</button>
+            </div>
+        </div>
+
+        <!-- TAB 3: KEYS LIST -->
+        <div class="card" id="tabKeys" style="display:none;">
+            <div class="card-header">Your Generated Keys</div>
+            <div class="card-body">
+                <div class="key-list" id="keyList">
+                    <div style="text-align:center; color:#777; padding:10px;">No keys generated yet.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = localStorage.getItem('current_user') || 'admin';
+        document.getElementById('welcomeUser').innerText = 'Welcome, ' + currentUser;
+        
+        let expireTime = Date.now() + (30 * 24 * 60 * 60 * 1000);
+        setInterval(function() {
+            let now = Date.now();
+            let diff = expireTime - now;
+            if (diff > 0) {
+                let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                let hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                document.getElementById('countdownTimer').innerText = `${days}Day : ${hours}h ${minutes}m ${seconds}s`;
+            }
+        }, 1000);
+
+        function switchTab(tab) {
+            document.getElementById('tabHome').style.display = (tab === 'home') ? 'block' : 'none';
+            document.getElementById('tabGenerate').style.display = (tab === 'generate') ? 'block' : 'none';
+            document.getElementById('tabKeys').style.display = (tab === 'keys') ? 'block' : 'none';
+        }
+
+        function calculateEstimation() {
+            let devices = parseInt(document.getElementById('devices').value) || 1;
+            let durationSelect = document.getElementById('duration');
+            let price = parseInt(durationSelect.options[durationSelect.selectedIndex].getAttribute('data-price')) || 10;
+            let bulk = parseInt(document.getElementById('bulkKeys').value) || 1;
+            document.getElementById('estimation').value = devices * price * bulk;
+        }
+
+        function generateKey() {
+            let duration = document.getElementById('duration').value;
+            let randomKey = 'VIP-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+            let keysKey = 'my_keys_' + currentUser;
+            let keys = JSON.parse(localStorage.getItem(keysKey) || '[]');
+            keys.push({key: randomKey, duration: duration, status: 'Un-used'});
+            localStorage.setItem(keysKey, JSON.stringify(keys));
+            alert('Key Generated Successfully!');
+            switchTab('keys');
+            loadKeys();
+        }
+
+        function loadKeys() {
+            let keysKey = 'my_keys_' + currentUser;
+            let keys = JSON.parse(localStorage.getItem(keysKey) || '[]');
+            let keyList = document.getElementById('keyList');
+            let total = keys.length;
+            let unused = keys.filter(k => k.status === 'Un-used').length;
+            document.getElementById('totalKeysCount').innerText = total;
+            document.getElementById('usedKeysCount').innerText = total - unused;
+            document.getElementById('unusedKeysCount').innerText = unused;
+            if(total > 0) {
+                keyList.innerHTML = '';
+                keys.forEach(item => {
+                    keyList.innerHTML += `<div class='key-item'><span><strong>${item.key}</strong></span><span style='color:green;'>${item.duration}</span></div>`;
+                });
+            }
+        }
+        loadKeys();
+
+        function logout() {
+            localStorage.removeItem('current_user');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
