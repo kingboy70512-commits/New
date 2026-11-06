@@ -21,6 +21,10 @@ def signup_page():
 def index_page():
     return render_template('index.html')
 
+@app.route('/admin')
+def admin_page():
+    return render_template('admin.html')
+
 @app.route('/api/login', methods=['POST'])
 def api_login():
     data = request.form
@@ -41,7 +45,7 @@ def api_register():
         if username in users_db:
             return jsonify({"status": False, "message": "User already exists!"})
         users_db[username] = password
-        balances_db[username] = 999999
+        balances_db[username] = 2000  # নতুন ইউজারের রেজিস্টার ব্যালেন্স 2k
         expire_times_db[username] = time.time() + (30 * 24 * 60 * 60)
         keys_db[username] = []
         return jsonify({"status": True, "message": "Registered successfully!"})
@@ -54,31 +58,95 @@ def api_generate_key():
     key = data.get('key', '').strip()
     duration = data.get('duration', '').strip()
     
+    if username not in users_db:
+        return jsonify({"status": False, "message": "User not found!"})
+        
+    # খরচ ক্যালকুলেট করা (Duration অনুযায়ী)
+    cost = 10
+    expire_seconds = 7 * 24 * 60 * 60  
+    if "2 Hours" in duration:
+        cost = 10
+        expire_seconds = 2 * 60 * 60
+    elif "1 Days" in duration:
+        cost = 80
+        expire_seconds = 24 * 60 * 60
+    elif "7 Days" in duration:
+        cost = 200
+        expire_seconds = 7 * 24 * 60 * 60
+        
+    # ব্যালেন্স চেক করা
+    current_balance = balances_db.get(username, 0)
+    if current_balance < cost:
+        return jsonify({"status": False, "message": "Insufficient balance to generate key!"})
+        
+    # ব্যালেন্স কাটা হচ্ছে
+    balances_db[username] = current_balance - cost
+    
     if username not in keys_db:
         keys_db[username] = []
         
     if key:
-        expire_seconds = 7 * 24 * 60 * 60  # বাই ডিফল্ট ৭ দিন
-        if "2 Hours" in duration:
-            expire_seconds = 2 * 60 * 60
-        elif "1 Days" in duration:
-            expire_seconds = 24 * 60 * 60
-        elif "7 Days" in duration:
-            expire_seconds = 7 * 24 * 60 * 60
-            
         expire_timestamp = time.time() + expire_seconds
-
         keys_db[username].append({
             'key': key, 
             'duration': duration, 
             'status': 'Un-used',
             'expire_time': expire_timestamp
         })
-        return jsonify({"status": True, "message": "Key saved to server successfully!"})
+        return jsonify({"status": True, "message": "Key saved successfully! Balance deducted."})
         
     return jsonify({"status": False, "message": "Invalid key data!"})
 
-# Working /updateaccount function added here
+@app.route('/api/get_keys', methods=['POST'])
+def api_get_keys():
+    username = request.form.get('username', 'admin').strip()
+    user_keys = keys_db.get(username, [])
+    user_balance = balances_db.get(username, 0)
+    return jsonify({"status": True, "keys": user_keys, "balance": user_balance})
+
+# এডমিনের জন্য সকল ইউজারের ডাটা দেখার রুট
+@app.route('/api/admin/users', methods=['GET'])
+def admin_get_users():
+    all_users = []
+    for user in users_db:
+        all_users.append({
+            "username": user,
+            "balance": balances_db.get(user, 0),
+            "keys_count": len(keys_db.get(user, []))
+        })
+    return jsonify({"status": True, "users": all_users})
+
+# এডমিন কর্তৃক ইউজার রিমুভ করার রুট
+@app.route('/api/admin/remove_user', methods=['POST'])
+def admin_remove_user():
+    username = request.form.get('username', '').strip()
+    if username == "admin":
+        return jsonify({"status": False, "message": "Cannot delete main admin!"})
+    
+    if username in users_db:
+        users_db.pop(username, None)
+        balances_db.pop(username, None)
+        expire_times_db.pop(username, None)
+        keys_db.pop(username, None)
+        return jsonify({"status": True, "message": "User removed successfully!"})
+    return jsonify({"status": False, "message": "User not found!"})
+
+# এডমিন কর্তৃক ব্যালেন্স এড বা রিমুভ করার রুট
+@app.route('/api/admin/update_balance', methods=['POST'])
+def admin_update_balance():
+    data = request.form
+    username = data.get('username', '').strip()
+    amount = int(data.get('amount', 0))
+    action = data.get('action', 'add').strip() # 'add' অথবা 'remove'
+    
+    if username in balances_db:
+        if action == 'add':
+            balances_db[username] += amount
+        elif action == 'remove':
+            balances_db[username] = max(0, balances_db[username] - amount)
+        return jsonify({"status": True, "message": "Balance updated successfully!", "new_balance": balances_db[username]})
+    return jsonify({"status": False, "message": "User not found!"})
+
 @app.route('/updateaccount', methods=['POST'])
 def update_account():
     data = request.form
@@ -86,26 +154,22 @@ def update_account():
     new_username = data.get('new_username', '').strip()
     new_password = data.get('new_password', '').strip()
 
-    # যদি ইউজারনেম আপডেট করতে চায়
     if old_username and new_username and old_username != new_username:
         if old_username not in users_db:
             return jsonify({"status": False, "message": "Original user not found!"})
         if new_username in users_db:
             return jsonify({"status": False, "message": "New username already taken!"})
         
-        # ডাটাবেজ ডিকশনারিগুলোর কি (key) রিনেম করা
         users_db[new_username] = users_db.pop(old_username)
-        balances_db[new_username] = balances_db.pop(old_username, 999999)
+        balances_db[new_username] = balances_db.pop(old_username, 2000)
         expire_times_db[new_username] = expire_times_db.pop(old_username, time.time() + (30 * 24 * 60 * 60))
         keys_db[new_username] = keys_db.pop(old_username, [])
         
-        # যদি সাথে পাসওয়ার্ডও পরিবর্তন করতে চায়
         if new_password:
             users_db[new_username] = new_password
             
         return jsonify({"status": True, "message": "Username and account updated successfully!"})
 
-    # যদি শুধু পাসওয়ার্ড আপডেট করতে চায়
     target_user = new_username if new_username else old_username
     if target_user and new_password:
         if target_user not in users_db:
