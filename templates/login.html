@@ -37,14 +37,35 @@
     </div>
     <script>
         function login() {
-            let user = document.getElementById('loginUser').value;
-            let pass = document.getElementById('loginPass').value;
-            if(user === 'admin' && pass === 'admin') {
-                localStorage.setItem('current_user', user);
-                window.location.href = '/dashboard';
-            } else {
-                alert('Invalid Username or Password! (Default: admin / admin)');
+            let user = document.getElementById('loginUser').value.trim();
+            let pass = document.getElementById('loginPass').value.trim();
+            
+            if(!user || !pass) {
+                alert('Please fill all fields!');
+                return;
             }
+
+            let formData = new URLSearchParams();
+            formData.append('username', user);
+            formData.append('password', pass);
+
+            fetch('/api/login', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    localStorage.setItem('current_user', user);
+                    window.location.href = '/dashboard';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Something went wrong!');
+            });
         }
     </script>
 </body>
