@@ -152,13 +152,32 @@
         function generateKey() {
             let duration = document.getElementById('duration').value;
             let randomKey = 'VIP-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-            let keysKey = 'my_keys_' + currentUser;
-            let keys = JSON.parse(localStorage.getItem(keysKey) || '[]');
-            keys.push({key: randomKey, duration: duration, status: 'Un-used'});
-            localStorage.setItem(keysKey, JSON.stringify(keys));
-            alert('Key Generated Successfully!');
-            switchTab('keys');
-            loadKeys();
+            
+            let formData = new URLSearchParams();
+            formData.append('username', currentUser);
+            formData.append('key', randomKey);
+            formData.append('duration', duration);
+
+            // ব্যাকএন্ড সার্ভারে কি (Key) সেভ করার জন্য রিকোয়েস্ট পাঠানো
+            fetch('/api/generate_key', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                let keysKey = 'my_keys_' + currentUser;
+                let keys = JSON.parse(localStorage.getItem(keysKey) || '[]');
+                keys.push({key: randomKey, duration: duration, status: 'Un-used'});
+                localStorage.setItem(keysKey, JSON.stringify(keys));
+                
+                alert('Key Generated & Saved to Server Successfully!');
+                switchTab('keys');
+                loadKeys();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to sync key with server!');
+            });
         }
 
         function loadKeys() {
