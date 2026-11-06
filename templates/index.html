@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAPPHIRE IQ - Admin Panel Design</title>
+    <title>XEROX MODS C PANEL DASBROD</title>
     <style>
         :root {
             --primary-glow: #a855f7;
@@ -26,7 +26,6 @@
             transition: background 0.3s ease;
         }
 
-        /* Fast glowing moving stars background */
         .stars-container {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -67,7 +66,6 @@
             100% { transform: translateY(50%); }
         }
 
-        /* SIDEBAR (SAPPHIRE IQ) */
         .sidebar {
             width: 260px;
             min-width: 260px;
@@ -144,7 +142,6 @@
 
         .menu-icon { width: 14px; height: 14px; fill: currentColor; }
 
-        /* MAIN CONTENT CONTAINER */
         .main-container {
             flex-grow: 1;
             display: flex;
@@ -155,7 +152,6 @@
             width: calc(100% - 260px);
         }
 
-        /* TOP NAVBAR */
         .top-navbar {
             height: 60px;
             border-bottom: 1px solid var(--border-color);
@@ -228,7 +224,6 @@
             cursor: pointer;
         }
 
-        /* DASHBOARD BODY */
         .content-body {
             padding: 25px 30px;
             overflow-y: auto;
@@ -242,7 +237,6 @@
             margin-bottom: 12px;
         }
 
-        /* OVERVIEW 4 CARDS GRID */
         .overview-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -273,7 +267,6 @@
 
         .sparkline { width: 100%; height: 24px; }
 
-        /* MIDDLE ANALYTICS & COUNTRIES GRID */
         .analytics-grid {
             display: grid;
             grid-template-columns: 2.2fr 1.2fr;
@@ -300,7 +293,6 @@
 
         .panel-box-header .sub { font-size: 11px; color: var(--primary-glow); cursor: pointer; }
 
-        /* Animated Chart container */
         .analytics-chart { height: 160px; width: 100%; display: flex; align-items: flex-end; position: relative; overflow: hidden; }
         .analytics-chart svg { width: 100%; height: 100%; }
         
@@ -314,7 +306,6 @@
             transform-origin: bottom;
         }
 
-        /* Top countries list */
         .country-row {
             display: flex;
             justify-content: space-between;
@@ -323,7 +314,6 @@
             color: #d1d5db;
         }
 
-        /* RECENT ACTIVITIES & SYSTEM STATUS & QUICK ACTIONS */
         .bottom-grid {
             display: grid;
             grid-template-columns: 1.5fr 1fr 1fr;
@@ -376,7 +366,6 @@
         }
         .quick-btn:hover { background: rgba(168, 85, 247, 0.2); border-color: var(--primary-glow); }
 
-        /* Footer Uptime & Security Score */
         .footer-stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -393,7 +382,6 @@
             font-size: 12px;
         }
 
-        /* Forms & Generator & Settings Tab Styles */
         .form-group { margin-bottom: 14px; }
         .form-group label { display: block; margin-bottom: 5px; font-size: 11px; font-weight: bold; color: #9ca3af; }
         .form-group input, .form-group select {
@@ -422,7 +410,6 @@
         .key-item { background: rgba(26, 15, 46, 0.8); padding: 8px 12px; margin-bottom: 5px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
         .delete-btn { background: #ef4444; border: none; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; }
 
-        /* Color Theme Options inside Settings */
         .theme-options {
             display: flex;
             gap: 15px;
@@ -450,13 +437,11 @@
 </head>
 <body>
 
-    <!-- Glowing Stars Background -->
     <div class="stars-container">
         <div class="stars"></div>
         <div class="stars2"></div>
     </div>
 
-    <!-- SIDEBAR NAVIGATION -->
     <div class="sidebar">
         <div class="brand-area">
             <div class="brand-logo-box">
@@ -481,6 +466,11 @@
                 <svg class="menu-icon" viewBox="0 0 24 24"><path d="M7 14c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zm13-11h-9v2h2v2h-2v2h2v2h-2.17c-.42 1.16-1.52 2-2.83 2C7.24 13 6 14.24 6 15.76V17h2v-1.24c0-.42.34-.76.76-.76.42 0 .76.34.76.76V17h2v-2.17c1.16-.42 2-1.52 2-2.83V3z"/></svg>
                 Active Keys
             </div>
+            <!-- Manage Users Menu (Only visible for admin) -->
+            <div class="menu-item" id="menuAdmin" style="display: none;" onclick="window.location.href='/admin'">
+                <svg class="menu-icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                Manage Users
+            </div>
             <div class="menu-item" id="menuSettings" onclick="switchTab('settings')">
                 <svg class="menu-icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36.254c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
                 Settings
@@ -488,7 +478,6 @@
         </div>
     </div>
 
-    <!-- MAIN WRAPPER -->
     <div class="main-container">
         <div class="top-navbar">
             <div class="search-box">
@@ -500,7 +489,7 @@
                     <div class="avatar" id="userAvatar">A</div>
                     <div class="admin-info">
                         <div class="name" id="welcomeUser">Admin User</div>
-                        <div class="role">Super Administrator</div>
+                        <div class="role" id="userBalanceText">Balance: 0 Coins</div>
                     </div>
                 </div>
                 <button class="logout-btn" onclick="logout()">Logout</button>
@@ -508,11 +497,9 @@
         </div>
 
         <div class="content-body">
-            <!-- TAB 1: HOME DASHBOARD -->
             <div id="tabHome">
                 <div class="section-title">OVERVIEW</div>
 
-                <!-- 4 Overview Metric Cards -->
                 <div class="overview-grid">
                     <div class="card-metric">
                         <div class="card-metric-top">
@@ -528,10 +515,10 @@
                     <div class="card-metric">
                         <div class="card-metric-top">
                             <div>
-                                <div class="label">Active Sessions</div>
-                                <div class="val" id="activeSessionsCount">1</div>
+                                <div class="label">Account Balance</div>
+                                <div class="val" id="userBalanceVal">0</div>
                             </div>
-                            <span class="badge green">Online</span>
+                            <span class="badge purple">Coins</span>
                         </div>
                         <svg class="sparkline" viewBox="0 0 100 25"><path d="M0 15 Q 25 22, 50 8 T 100 12" fill="none" stroke="#c084fc" stroke-width="2"/></svg>
                     </div>
@@ -559,7 +546,6 @@
                     </div>
                 </div>
 
-                <!-- Middle Analytics Grid with Animated Visitor Chart -->
                 <div class="analytics-grid">
                     <div class="panel-box">
                         <div class="panel-box-header">
@@ -589,12 +575,11 @@
                     </div>
                 </div>
 
-                <!-- Bottom Grid -->
                 <div class="bottom-grid">
                     <div class="panel-box">
                         <div class="panel-box-header"><span>RECENT ACTIVITIES</span><span class="sub" onclick="switchTab('keys')">View Keys</span></div>
                         <div class="activity-item"><span>Panel Logged In Successfully</span><span style="color:#34d399;">Just Now</span></div>
-                        <div class="activity-item"><span>Database Synced (LocalStorage)</span><span style="color:#34d399;">Active</span></div>
+                        <div class="activity-item"><span>Database Synced (Server)</span><span style="color:#34d399;">Active</span></div>
                     </div>
 
                     <div class="panel-box">
@@ -612,7 +597,6 @@
                     </div>
                 </div>
 
-                <!-- Footer Stats -->
                 <div class="footer-stats-grid">
                     <div class="footer-stat-card">
                         <div><div style="font-size:10px; color:#9ca3af;">Server Uptime</div><div style="font-size:15px; font-weight:bold;">99.9%</div></div>
@@ -629,7 +613,6 @@
                 </div>
             </div>
 
-            <!-- TAB 2: GENERATE LICENSE -->
             <div class="panel-box" id="tabGenerate" style="display:none; max-width:600px; margin:0 auto;">
                 <div class="panel-box-header"><span>CREATE LICENSE KEY</span></div>
                 <div class="form-group">
@@ -647,9 +630,9 @@
                 <div class="form-group">
                     <label>DURATION</label>
                     <select id="duration" onchange="calculateEstimation()">
-                        <option value="2 Hours — ₹10/Device" data-price="10">2 Hours — ₹10/Device</option>
-                        <option value="1 Days — ₹80/Device" data-price="80">1 Days — ₹80/Device</option>
-                        <option value="7 Days — ₹200/Device" data-price="200">7 Days — ₹200/Device</option>
+                        <option value="2 Hours — 10 Coins" data-price="10">2 Hours — 10 Coins</option>
+                        <option value="1 Days — 80 Coins" data-price="80">1 Days — 80 Coins</option>
+                        <option value="7 Days — 200 Coins" data-price="200">7 Days — 200 Coins</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -661,13 +644,12 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>ESTIMATION</label>
+                    <label>ESTIMATION COST</label>
                     <input type="text" id="estimation" readonly value="10">
                 </div>
                 <button type="button" class="btn-generate" onclick="generateKey()">GENERATE KEY</button>
             </div>
 
-            <!-- TAB 3: KEYS LIST -->
             <div class="panel-box" id="tabKeys" style="display:none; max-width:700px; margin:0 auto;">
                 <div class="panel-box-header"><span>YOUR GENERATED KEYS</span></div>
                 <div class="key-list" id="keyList">
@@ -675,7 +657,6 @@
                 </div>
             </div>
 
-            <!-- TAB 4: SETTINGS (Manage Account, Change Username, Password & UI Color) -->
             <div class="panel-box" id="tabSettings" style="display:none; max-width:600px; margin:0 auto;">
                 <div class="panel-box-header"><span>SETTINGS & ACCOUNT MANAGEMENT</span></div>
                 
@@ -714,7 +695,13 @@
         document.getElementById('welcomeUser').innerText = currentUser;
         document.getElementById('userAvatar').innerText = currentUser.charAt(0).toUpperCase();
 
-        // Load saved theme if available
+        // Check if logged-in user is 'admin' to show Manage Users menu
+        if (currentUser.toLowerCase() === 'admin') {
+            document.getElementById('menuAdmin').style.display = 'flex';
+        } else {
+            document.getElementById('menuAdmin').style.display = 'none';
+        }
+
         let savedGlow = localStorage.getItem('theme_glow');
         let savedStart = localStorage.getItem('theme_start');
         let savedEnd = localStorage.getItem('theme_end');
@@ -762,63 +749,61 @@
             })
             .then(response => response.json())
             .then(data => {
-                let keysKey = 'my_keys_' + currentUser;
-                let keys = JSON.parse(localStorage.getItem(keysKey) || '[]');
-                keys.push({key: randomKey, duration: duration, status: 'Un-used'});
-                localStorage.setItem(keysKey, JSON.stringify(keys));
-                
-                alert('Key Generated Successfully!');
-                switchTab('keys');
-                loadKeys();
+                if(data.status) {
+                    alert(data.message);
+                    switchTab('keys');
+                    loadKeys();
+                } else {
+                    alert(data.message);
+                }
             })
             .catch(error => {
-                let keysKey = 'my_keys_' + currentUser;
-                let keys = JSON.parse(localStorage.getItem(keysKey) || '[]');
-                keys.push({key: randomKey, duration: duration, status: 'Un-used'});
-                localStorage.setItem(keysKey, JSON.stringify(keys));
-                
-                alert('Key Generated Successfully!');
-                switchTab('keys');
-                loadKeys();
+                alert('Error generating key!');
             });
         }
 
         function loadKeys() {
-            let keysKey = 'my_keys_' + currentUser;
-            let keys = JSON.parse(localStorage.getItem(keysKey) || '[]');
-            let keyList = document.getElementById('keyList');
-            let total = keys.length;
-            
-            document.getElementById('totalKeysCount').innerText = total;
-            
-            if(total > 0) {
-                keyList.innerHTML = '';
-                keys.forEach((item, index) => {
-                    keyList.innerHTML += `
-                        <div class='key-item'>
-                            <div>
-                                <strong style='color:var(--primary-glow);'>${item.key}</strong><br>
-                                <span style='color:#34d399; font-size:10px;'>${item.duration}</span>
-                            </div>
-                            <button class='delete-btn' onclick='deleteKey(${index})'>Delete</button>
-                        </div>`;
-                });
-            } else {
-                keyList.innerHTML = `<div style='text-align:center; color:#9ca3af; padding:20px;'>No keys generated yet.</div>`;
-            }
-        }
+            let formData = new URLSearchParams();
+            formData.append('username', currentUser);
 
-        function deleteKey(index) {
-            let keysKey = 'my_keys_' + currentUser;
-            let keys = JSON.parse(localStorage.getItem(keysKey) || '[]');
-            keys.splice(index, 1);
-            localStorage.setItem(keysKey, JSON.stringify(keys));
-            loadKeys();
+            fetch('/api/get_keys', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                let keys = data.keys || [];
+                let balance = data.balance || 0;
+                let keyList = document.getElementById('keyList');
+                let total = keys.length;
+                
+                document.getElementById('totalKeysCount').innerText = total;
+                document.getElementById('userBalanceVal').innerText = balance;
+                document.getElementById('userBalanceText').innerText = `Balance: ${balance} Coins`;
+                
+                if(total > 0) {
+                    keyList.innerHTML = '';
+                    keys.forEach((item, index) => {
+                        keyList.innerHTML += `
+                            <div class='key-item'>
+                                <div>
+                                    <strong style='color:var(--primary-glow);'>${item.key}</strong><br>
+                                    <span style='color:#34d399; font-size:10px;'>${item.duration}</span>
+                                </div>
+                                <span style='font-size:10px; color:#9ca3af;'>${item.status}</span>
+                            </div>`;
+                    });
+                } else {
+                    keyList.innerHTML = `<div style='text-align:center; color:#9ca3af; padding:20px;'>No keys generated yet.</div>`;
+                }
+            })
+            .catch(err => {
+                console.error("Failed to load keys");
+            });
         }
         
         loadKeys();
 
-        // Real Server Account Updates via /updateaccount
         function updateUsername() {
             let newName = document.getElementById('newUsernameInput').value.trim();
             if(!newName) {
@@ -836,23 +821,26 @@
             })
             .then(res => res.json())
             .then(data => {
-                if(data.success || data.status === 'ok') {
+                if(data.status) {
                     localStorage.setItem('current_user', newName);
                     currentUser = newName;
                     document.getElementById('welcomeUser').innerText = currentUser;
                     document.getElementById('userAvatar').innerText = currentUser.charAt(0).toUpperCase();
+                    
+                    // Re-check admin visibility after username change
+                    if (currentUser.toLowerCase() === 'admin') {
+                        document.getElementById('menuAdmin').style.display = 'flex';
+                    } else {
+                        document.getElementById('menuAdmin').style.display = 'none';
+                    }
+
                     alert('Username successfully updated on server!');
                 } else {
                     alert('Server error: ' + (data.message || 'Failed'));
                 }
             })
             .catch(err => {
-                // Fallback simulation if server route missing response format
-                localStorage.setItem('current_user', newName);
-                currentUser = newName;
-                document.getElementById('welcomeUser').innerText = currentUser;
-                document.getElementById('userAvatar').innerText = currentUser.charAt(0).toUpperCase();
-                alert('Username updated successfully!');
+                alert('Failed to update username.');
             });
         }
 
@@ -864,7 +852,8 @@
             }
 
             let formData = new URLSearchParams();
-            formData.append('username', currentUser);
+            formData.append('old_username', currentUser);
+            formData.append('new_username', currentUser);
             formData.append('new_password', newPass);
 
             fetch('/updateaccount', {
@@ -877,8 +866,7 @@
                 document.getElementById('newPasswordInput').value = '';
             })
             .catch(err => {
-                alert('Password updated successfully!');
-                document.getElementById('newPasswordInput').value = '';
+                alert('Failed to update password.');
             });
         }
 
