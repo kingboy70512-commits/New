@@ -7,7 +7,6 @@ app = Flask(__name__)
 users_db = {"admin": "admin"}
 balances_db = {"admin": 999999}
 expire_times_db = {"admin": time.time() + (30 * 24 * 60 * 60)}
-# আমরা কি স্টোর করার সময় সাথে এক্সপায়ারি টাইমও (যেমন: ৭ দিন বা ২ ঘণ্টা পর) সেভ করব
 keys_db = {"admin": []}
 
 @app.route('/')
@@ -59,7 +58,6 @@ def api_generate_key():
         keys_db[username] = []
         
     if key:
-        # ডিউরেশন অনুযায়ী এক্সপায়ারি সেকেন্ড ক্যালকুলেট করা (যেমন: ২ ঘণ্টা বা ১ দিন)
         expire_seconds = 7 * 24 * 60 * 60  # বাই ডিফল্ট ৭ দিন
         if "2 Hours" in duration:
             expire_seconds = 2 * 60 * 60
@@ -80,6 +78,43 @@ def api_generate_key():
         
     return jsonify({"status": False, "message": "Invalid key data!"})
 
+# Working /updateaccount function added here
+@app.route('/updateaccount', methods=['POST'])
+def update_account():
+    data = request.form
+    old_username = data.get('old_username', '').strip()
+    new_username = data.get('new_username', '').strip()
+    new_password = data.get('new_password', '').strip()
+
+    # যদি ইউজারনেম আপডেট করতে চায়
+    if old_username and new_username and old_username != new_username:
+        if old_username not in users_db:
+            return jsonify({"status": False, "message": "Original user not found!"})
+        if new_username in users_db:
+            return jsonify({"status": False, "message": "New username already taken!"})
+        
+        # ডাটাবেজ ডিকশনারিগুলোর কি (key) রিনেম করা
+        users_db[new_username] = users_db.pop(old_username)
+        balances_db[new_username] = balances_db.pop(old_username, 999999)
+        expire_times_db[new_username] = expire_times_db.pop(old_username, time.time() + (30 * 24 * 60 * 60))
+        keys_db[new_username] = keys_db.pop(old_username, [])
+        
+        # যদি সাথে পাসওয়ার্ডও পরিবর্তন করতে চায়
+        if new_password:
+            users_db[new_username] = new_password
+            
+        return jsonify({"status": True, "message": "Username and account updated successfully!"})
+
+    # যদি শুধু পাসওয়ার্ড আপডেট করতে চায়
+    target_user = new_username if new_username else old_username
+    if target_user and new_password:
+        if target_user not in users_db:
+            return jsonify({"status": False, "message": "User not found!"})
+        users_db[target_user] = new_password
+        return jsonify({"status": True, "message": "Password updated successfully!"})
+
+    return jsonify({"status": False, "message": "No changes provided!"})
+
 @app.route('/connect', methods=['GET', 'POST'])
 def connect_api():
     user_key = request.args.get('user_key') or request.form.get('user_key', '')
@@ -93,19 +128,17 @@ def connect_api():
         if found_key:
             break
             
-    # টেস্ট কি অথবা ডাটাবেজে থাকা কি চেক করা
     if user_key == "VIP-TEST-KEY":
         return jsonify({
             "status": True,
             "data": {
                 "token": "Vm8Lk7Uj2JmsjCPVPVjrLa7zgfx3uz9E",
                 "rng": int(time.time()),
-                "expiry": int(time.time() + 86400) # টেস্ট কি এর জন্য ১ দিনের মেয়াদ
+                "expiry": int(time.time() + 86400)
             }
         })
         
     if found_key:
-        # চেক করা কি কি এক্সপায়ার হয়ে গেছে কিনা
         current_time = time.time()
         if current_time > found_key.get('expire_time', current_time + 1000):
             return jsonify({
