@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MY VIP PANEL</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background: linear-gradient(135deg, #ff6b6b, #ffe600, #55efc4); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: #ffffff; width: 100%; max-width: 450px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; }
+        .card-header { padding: 15px; font-weight: bold; border-bottom: 1px solid #eee; color: #333; font-size: 16px; background: linear-gradient(to right, #ffafbd, #ffc3a0); text-align: center; }
+        .card-body { padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: bold; color: #555; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; outline: none; }
+        .btn { background: transparent; border: 1px solid #fdcb6e; color: #e17055; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; text-align: center; display: block; }
+        .btn:hover { background: #fff5e6; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">LOGIN</div>
+        <div class="card-body">
+            <div class="form-group">
+                <label>USERNAME</label>
+                <input type="text" id="loginUser" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label>PASSWORD</label>
+                <input type="password" id="loginPass" placeholder="Enter password">
+            </div>
+            <button type="button" class="btn" onclick="login()">Log in</button>
+            <p style="text-align:center; margin-top:15px; font-size:13px;">
+                Don't have an account? <a href="/signup" style="color:#e17055;">Register here</a>
+            </p>
+        </div>
+    </div>
+    <script>
+        function login() {
+            let user = document.getElementById('loginUser').value;
+            let pass = document.getElementById('loginPass').value;
+            if(user === 'admin' && pass === 'admin') {
+                localStorage.setItem('current_user', user);
+                window.location.href = '/dashboard';
+            } else {
+                alert('Invalid Username or Password! (Default: admin / admin)');
+            }
+        }
+    </script>
+</body>
+</html>
