@@ -20,7 +20,9 @@
         .btn { background: transparent; border: 1px solid #fdcb6e; color: #e17055; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; text-align: center; display: block; }
         .btn:hover { background: #fff5e6; }
         .key-list { margin-top: 15px; max-height: 180px; overflow-y: auto; border: 1px solid #ddd; padding: 5px; font-size: 12px; }
-        .key-item { background: #f9f9f9; padding: 6px; margin-bottom: 4px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+        .key-item { background: #f9f9f9; padding: 6px; margin-bottom: 4px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .delete-btn { background: #ff7675; color: white; border: none; padding: 3px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .delete-btn:hover { background: #d63031; }
         .logout-btn { color: #d63031; font-size: 12px; cursor: pointer; font-weight: bold; background: #fff; padding: 3px 6px; border-radius: 3px; }
         .balance-badge { background: #ffeaa7; color: #d63031; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
         .expire-banner { background: #d4edda; color: #155724; padding: 10px; text-align: center; font-size: 13px; font-weight: bold; border-radius: 4px; margin-bottom: 10px; border: 1px solid #c3e6cb; }
@@ -158,7 +160,6 @@
             formData.append('key', randomKey);
             formData.append('duration', duration);
 
-            // ব্যাকএন্ড সার্ভারে কি (Key) সেভ করার জন্য রিকোয়েস্ট পাঠানো
             fetch('/api/generate_key', {
                 method: 'POST',
                 body: formData
@@ -170,7 +171,7 @@
                 keys.push({key: randomKey, duration: duration, status: 'Un-used'});
                 localStorage.setItem(keysKey, JSON.stringify(keys));
                 
-                alert('Key Generated & Saved to Server Successfully!');
+                alert('Key Generated Successfully!');
                 switchTab('keys');
                 loadKeys();
             })
@@ -186,16 +187,37 @@
             let keyList = document.getElementById('keyList');
             let total = keys.length;
             let unused = keys.filter(k => k.status === 'Un-used').length;
+            
             document.getElementById('totalKeysCount').innerText = total;
             document.getElementById('usedKeysCount').innerText = total - unused;
             document.getElementById('unusedKeysCount').innerText = unused;
+            
             if(total > 0) {
                 keyList.innerHTML = '';
-                keys.forEach(item => {
-                    keyList.innerHTML += `<div class='key-item'><span><strong>${item.key}</strong></span><span style='color:green;'>${item.duration}</span></div>`;
+                keys.forEach((item, index) => {
+                    keyList.innerHTML += `
+                        <div class='key-item'>
+                            <div>
+                                <strong>${item.key}</strong><br>
+                                <span style='color:green; font-size:11px;'>${item.duration}</span>
+                            </div>
+                            <button class='delete-btn' onclick='deleteKey(${index})'>Delete</button>
+                        </div>`;
                 });
+            } else {
+                keyList.innerHTML = `<div style='text-align:center; color:#777; padding:10px;'>No keys generated yet.</div>`;
             }
         }
+
+        // নির্দিষ্ট কি ডিলিট করার ফাংশন
+        function deleteKey(index) {
+            let keysKey = 'my_keys_' + currentUser;
+            let keys = JSON.parse(localStorage.getItem(keysKey) || '[]');
+            keys.splice(index, 1); // অ্যারে থেকে কি রিমুভ করা
+            localStorage.setItem(keysKey, JSON.stringify(keys));
+            loadKeys(); // লিস্ট রিফ্রেশ করা
+        }
+        
         loadKeys();
 
         function logout() {
