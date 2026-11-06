@@ -39,14 +39,33 @@
         function register() {
             let user = document.getElementById('regUser').value.trim();
             let pass = document.getElementById('regPass').value.trim();
-            if(user && pass) {
-                localStorage.setItem('reg_user_' + user, user);
-                localStorage.setItem('reg_pass_' + user, pass);
-                alert('Registered successfully! Please login.');
-                window.location.href = '/';
-            } else {
+            
+            if(!user || !pass) {
                 alert('Please fill all fields!');
+                return;
             }
+
+            let formData = new URLSearchParams();
+            formData.append('username', user);
+            formData.append('password', pass);
+
+            fetch('/api/register', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    alert(data.message);
+                    window.location.href = '/';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Something went wrong!');
+            });
         }
     </script>
 </body>
