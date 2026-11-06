@@ -47,6 +47,23 @@ def api_register():
         return jsonify({"status": True, "message": "Registered successfully!"})
     return jsonify({"status": False, "message": "Please fill all fields!"})
 
+# ড্যাশবোর্ড থেকে জেনারেট করা কি সার্ভারে সেভ করার জন্য নতুন রাউট
+@app.route('/api/generate_key', methods=['POST'])
+def api_generate_key():
+    data = request.form
+    username = data.get('username', 'admin').strip()
+    key = data.get('key', '').strip()
+    duration = data.get('duration', '').strip()
+    
+    if username not in keys_db:
+        keys_db[username] = []
+        
+    if key:
+        keys_db[username].append({'key': key, 'duration': duration, 'status': 'Un-used'})
+        return jsonify({"status": True, "message": "Key saved to server successfully!"})
+        
+    return jsonify({"status": False, "message": "Invalid key data!"})
+
 @app.route('/connect', methods=['GET', 'POST'])
 def connect_api():
     user_key = request.args.get('user_key') or request.form.get('user_key', '')
