@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAPPHIRE IQ - Admin Control Panel</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #030107; color: #fff; padding: 30px; }
+        .container { max-width: 900px; margin: 0 auto; background: rgba(12, 7, 24, 0.9); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 25px; box-shadow: 0 0 20px rgba(168, 85, 247, 0.2); }
+        h2 { margin-bottom: 20px; color: #c084fc; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
+        th { color: #a855f7; }
+        .btn { padding: 6px 12px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; font-size: 11px; margin-right: 5px; }
+        .btn-danger { background: #ef4444; color: #fff; }
+        .btn-success { background: #22c55e; color: #fff; }
+        .btn-warning { background: #f59e0b; color: #fff; }
+        input[type="number"] { width: 70px; padding: 5px; background: #08040f; border: 1px solid #a855f7; color: #fff; border-radius: 4px; }
+        .back-btn { display: inline-block; margin-bottom: 15px; color: #c084fc; text-decoration: none; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/dashboard" class="back-btn">&larr; Back to Dashboard</a>
+        <h2>Admin Panel — User Management</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Balance</th>
+                    <th>Total Keys</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                <!-- Dynamically loaded -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function loadUsers() {
+            fetch('/api/admin/users')
+            .then(res => res.json())
+            .then(data => {
+                if(data.status) {
+                    let tbody = document.getElementById('userTableBody');
+                    tbody.innerHTML = '';
+                    data.users.forEach(user => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><strong>${user.username}</strong></td>
+                                <td style="color: #4ade80;">${user.balance} Coins</td>
+                                <td>${user.keys_count} Keys</td>
+                                <td>
+                                    <input type="number" id="amt_${user.username}" value="100" min="1">
+                                    <button class="btn btn-success" onclick="modifyBalance('${user.username}', 'add')">+ Add</button>
+                                    <button class="btn btn-warning" onclick="modifyBalance('${user.username}', 'remove')">- Remove</button>
+                                    ${user.username !== 'admin' ? `<button class="btn btn-danger" onclick="deleteUser('${user.username}')">Delete</button>` : ''}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+            });
+        }
+
+        function modifyBalance(username, action) {
+            let amount = document.getElementById(`amt_${username}`).value;
+            let formData = new URLSearchParams();
+            formData.append('username', username);
+            formData.append('amount', amount);
+            formData.append('action', action);
+
+            fetch('/api/admin/update_balance', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status) {
+                    alert(data.message);
+                    loadUsers();
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        function deleteUser(username) {
+            if(confirm(`Are you sure you want to delete user: ${username}?`)) {
+                let formData = new URLSearchParams();
+                formData.append('username', username);
+
+                fetch('/api/admin/remove_user', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status) {
+                        alert(data.message);
+                        loadUsers();
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            }
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>
