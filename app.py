@@ -7,6 +7,7 @@ app = Flask(__name__)
 users_db = {"admin": "admin"}
 balances_db = {"admin": 999999}
 expire_times_db = {"admin": time.time() + (30 * 24 * 60 * 60)}
+# আমরা কি স্টোর করার সময় সাথে এক্সপায়ারি টাইমও (যেমন: ৭ দিন বা ২ ঘণ্টা পর) সেভ করব
 keys_db = {"admin": []}
 
 @app.route('/')
@@ -47,7 +48,6 @@ def api_register():
         return jsonify({"status": True, "message": "Registered successfully!"})
     return jsonify({"status": False, "message": "Please fill all fields!"})
 
-# ড্যাশবোর্ড থেকে জেনারেট করা কি সার্ভারে সেভ করার জন্য নতুন রাউট
 @app.route('/api/generate_key', methods=['POST'])
 def api_generate_key():
     data = request.form
@@ -59,7 +59,23 @@ def api_generate_key():
         keys_db[username] = []
         
     if key:
-        keys_db[username].append({'key': key, 'duration': duration, 'status': 'Un-used'})
+        # ডিউরেশন অনুযায়ী এক্সপায়ারি সেকেন্ড ক্যালকুলেট করা (যেমন: ২ ঘণ্টা বা ১ দিন)
+        expire_seconds = 7 * 24 * 60 * 60  # বাই ডিফল্ট ৭ দিন
+        if "2 Hours" in duration:
+            expire_seconds = 2 * 60 * 60
+        elif "1 Days" in duration:
+            expire_seconds = 24 * 60 * 60
+        elif "7 Days" in duration:
+            expire_seconds = 7 * 24 * 60 * 60
+            
+        expire_timestamp = time.time() + expire_seconds
+
+        keys_db[username].append({
+            'key': key, 
+            'duration': duration, 
+            'status': 'Un-used',
+            'expire_time': expire_timestamp
+        })
         return jsonify({"status": True, "message": "Key saved to server successfully!"})
         
     return jsonify({"status": False, "message": "Invalid key data!"})
@@ -68,21 +84,41 @@ def api_generate_key():
 def connect_api():
     user_key = request.args.get('user_key') or request.form.get('user_key', '')
     
-    isValidKey = False
+    found_key = None
     for user, keys in keys_db.items():
         for k in keys:
             if k['key'] == user_key:
-                isValidKey = True
+                found_key = k
                 break
-        if isValidKey:
+        if found_key:
             break
             
-    if isValidKey or user_key == "VIP-TEST-KEY":
+    # টেস্ট কি অথবা ডাটাবেজে থাকা কি চেক করা
+    if user_key == "VIP-TEST-KEY":
         return jsonify({
             "status": True,
             "data": {
                 "token": "Vm8Lk7Uj2JmsjCPVPVjrLa7zgfx3uz9E",
-                "rng": int(time.time())
+                "rng": int(time.time()),
+                "expiry": int(time.time() + 86400) # টেস্ট কি এর জন্য ১ দিনের মেয়াদ
+            }
+        })
+        
+    if found_key:
+        # চেক করা কি কি এক্সপায়ার হয়ে গেছে কিনা
+        current_time = time.time()
+        if current_time > found_key.get('expire_time', current_time + 1000):
+            return jsonify({
+                "status": False,
+                "reason": "Key has expired!"
+            })
+            
+        return jsonify({
+            "status": True,
+            "data": {
+                "token": "Vm8Lk7Uj2JmsjCPVPVjrLa7zgfx3uz9E",
+                "rng": int(time.time()),
+                "expiry": int(found_key['expire_time'])
             }
         })
     else:
